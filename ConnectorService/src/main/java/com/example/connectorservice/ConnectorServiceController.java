@@ -8,22 +8,28 @@ import com.example.protocol.PriceDto;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.*;
 
 @RestController
 @AllArgsConstructor
 public class ConnectorServiceController {
 
-    final BugzordFeignClient client;
+    final BugzordFeignClient bugzordFeignClient;
     final KrzychuFeignClient krzychuFeignClient;
 
     final MathService mathService;
 
     @GetMapping("/api/bugzord")
     Set<BuildingDto> getBuildings(){
-        return client.getBuildings();
+        return bugzordFeignClient.getBuildings();
     }
 
     @GetMapping("/api/krzychu")
@@ -35,15 +41,48 @@ public class ConnectorServiceController {
     Set<BuildingDto> connectBuildings() {
         final Set<BuildingDto> result = new HashSet<>();
         result.addAll(krzychuFeignClient.getBuildings());
-        result.addAll(client.getBuildings());
+        result.addAll(bugzordFeignClient.getBuildings());
 
         return result;
+    }
 
+    @GetMapping("/api/buildings/type/{type}")
+    public Set<BuildingDto> getBuildingsByType(@PathVariable @RequestParam BuildingType type) {
+        final Set<BuildingDto> result = new HashSet<>();
+        result.addAll(krzychuFeignClient.getBuildingsByType(type.name()));
+        result.addAll(bugzordFeignClient.getBuildingsByType(type.name()));
+
+        return result;
+    }
+
+    @GetMapping("/api/buildings/country/{country}")
+    public Set<BuildingDto> getBuildingsByType(@PathVariable @RequestParam String country) {
+        final Set<BuildingDto> result = new HashSet<>();
+        result.addAll(krzychuFeignClient.getBuildingsByCountry(country));
+        result.addAll(bugzordFeignClient.getBuildingsByCountry(country));
+
+        return result;
+    }
+
+    @GetMapping("/api/buildings/price")
+    public List<BuildingDto> getBuildingsByType(@RequestParam(required = false) Long priceFrom,
+                                                @RequestParam(required = false) Long priceTo,
+                                                @RequestParam(required = false) String sort) {
+
+        final Set<BuildingDto> result = new HashSet<>();
+        result.addAll(krzychuFeignClient.getBuildingsByPrice(priceFrom, priceTo, sort));
+        result.addAll(bugzordFeignClient.getBuildingsByPrice(priceFrom, priceTo, sort));
+
+        if (sort.equalsIgnoreCase("DESC")) {
+            return result.stream().sorted(Comparator.comparing(BuildingDto::getPrice).reversed()).toList();
+        }
+
+        return result.stream().sorted(Comparator.comparing(BuildingDto::getPrice)).toList();
     }
 
     @GetMapping("/api/minprice")
     public Map<String, PriceDto> getMinPriceForAllCountries() {
-        final Map<String, PriceDto> bMap = client.getMinPriceForAllCountries();
+        final Map<String, PriceDto> bMap = bugzordFeignClient.getMinPriceForAllCountries();
         final Map<String, PriceDto> kMap = krzychuFeignClient.getMinPriceForAllCountries();
 
         final Map<String, PriceDto> resultMap = new HashMap<>(bMap);
@@ -64,7 +103,7 @@ public class ConnectorServiceController {
 
     @GetMapping("/api/maxprice")
     public Map<String, PriceDto> getMaxPriceForAllCountries() {
-        final Map<String, PriceDto> bMap = client.getMaxPriceForAllCountries();
+        final Map<String, PriceDto> bMap = bugzordFeignClient.getMaxPriceForAllCountries();
         final Map<String, PriceDto> kMap = krzychuFeignClient.getMaxPriceForAllCountries();
 
         final Map<String, PriceDto> resultMap = new HashMap<>(bMap);

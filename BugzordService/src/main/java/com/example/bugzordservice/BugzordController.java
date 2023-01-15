@@ -1,13 +1,20 @@
 package com.example.bugzordservice;
 
 import com.example.protocol.BuildingDto;
+import com.example.protocol.BuildingType;
 import com.example.protocol.PriceDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +27,8 @@ public class BugzordController {
     final BuildingRepo buildingRepo;
     final AddressRepo addressRepo;
 
-    final static Pageable P = PageRequest.of(0, 100);
+    final static Integer LIMIT = 100;
+    final static Pageable P = PageRequest.of(0, LIMIT);
 
     @GetMapping("/api/addresses")
     public Set<Address> addresses() {
@@ -29,6 +37,27 @@ public class BugzordController {
     @GetMapping("/api/getBuildings")
     public Set<BuildingDto> buildings() {
         return buildingRepo.findAll(P).stream().map(BugzordController::map).collect(Collectors.toSet());
+    }
+
+    @GetMapping("/api/buildings/type")
+    public Set<BuildingDto> getBuildingsByType(@RequestParam BuildingType type) {
+        return buildingRepo.findAllByType(type, P).map(BugzordController::map).toSet();
+    }
+
+    @GetMapping("/api/buildings/country")
+    public Set<BuildingDto> getBuildingsByCountry(@RequestParam String country) {
+        return buildingRepo.findAllByAddress_Country(country, P).map(BugzordController::map).toSet();
+    }
+
+    @GetMapping("/api/buildings/price")
+    public Set<BuildingDto> getBuildingsByPrice(@RequestParam(required = false) Long priceFrom,
+                                                @RequestParam(required = false) Long priceTo,
+                                                @RequestParam(required = false) String sort) {
+
+        if (Objects.isNull(priceFrom)) priceFrom = 0L;
+        if (Objects.isNull(priceTo)) priceTo = Long.MAX_VALUE;
+
+        return buildingRepo.findAllByPriceAfterAndPriceBefore(priceFrom, priceTo, P).map(BugzordController::map).toSet();
     }
 
     private static BuildingDto map(Buildings b) {
