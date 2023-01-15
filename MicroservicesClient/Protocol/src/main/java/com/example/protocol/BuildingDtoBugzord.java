@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class BuildingDto {
+public class BuildingDtoBugzord {
     private Long id;
     private String country;
     private String city;
@@ -16,4 +16,5 @@ public class BuildingDto {
 
     private Short bedrooms;
     private Short bathrooms;
+
 }
