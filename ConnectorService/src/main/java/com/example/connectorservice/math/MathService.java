@@ -7,28 +7,43 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MathService {
 
     public static Map<String, Set<LocalePercentageResponse>> getPercentage(Set<BuildingDto> set) {
-        long totalItems = set.size();
-        Map<String, Set<LocalePercentageResponse>> resMap = new HashMap<>();
-        set.stream().forEach(buildingDto -> {
-            Set<LocalePercentageResponse> resForCountry = new HashSet<>();
-            Arrays.stream(BuildingType.values()).forEach(buildingType -> {
-                long typeCount = set.stream().filter(b -> buildingType.toString().equals(b.getType())).count();
-                long percentage = typeCount/totalItems;
 
-                LocalePercentageResponse res = LocalePercentageResponse.builder()
-                        .buildingType(buildingType.toString())
-                        .percentage(percentage).build();
-                resForCountry.add(res);
+        Map<String, Set<LocalePercentageResponse>> resMap = new HashMap<>();
+        countriesList(set).forEach(country -> {
+            final Set<BuildingDto> itemsForCountry = set.stream()
+                    .filter(b -> b.getCountry().equals(country))
+                    .collect(Collectors.toSet());
+
+            final Set<LocalePercentageResponse> resForCountry = new HashSet<>();
+
+            Arrays.stream(BuildingType.values()).forEach(buildingType -> {
+
+                final double typeCount = itemsForCountry.stream()
+                        .filter(b -> buildingType.toString().equals(b.getType()))
+                        .count();
+
+                resForCountry.add(new LocalePercentageResponse(
+                        typeCount / itemsForCountry.size() * 100, buildingType.toString())
+                );
             });
-            resMap.put(buildingDto.getCountry(), resForCountry);
+            resMap.put(country, resForCountry);
         });
         return resMap;
     }
 
+
+    private static Set<String> countriesList(Set<BuildingDto> dto) {
+        Set<String> cSet = new HashSet<>();
+        dto.forEach(b -> {
+            cSet.add(b.getCountry());
+        });
+        return cSet;
+    }
 
 }
