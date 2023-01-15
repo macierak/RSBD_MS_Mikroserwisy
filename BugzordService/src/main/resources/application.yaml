@@ -1,0 +1,9 @@
+
+spring:
+  datasource:
+    url: jdbc:postgresql://baasu.db.elephantsql.com:5432/bhugxzor
+    username: bhugxzor
+    password: Kq-bs2dyl9LqWr5423qRgMKh2ULfvvPr
+
+server:
+  port: 8060
