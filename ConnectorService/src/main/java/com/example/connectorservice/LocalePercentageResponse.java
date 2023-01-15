@@ -1,13 +1,11 @@
 package com.example.connectorservice;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@AllArgsConstructor
 public class LocalePercentageResponse {
-    private Long percentage;
+    private Double percentage;
     private String buildingType;
 }
