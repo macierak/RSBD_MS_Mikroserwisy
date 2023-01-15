@@ -5,16 +5,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class BuildingDtoKrzychu {
-    private Long id;
-    private String country;
-    private String city;
+public class PriceDto {
     private String street;
     private String type;
-
     private Long price;
+    private String city;
 
-    private Short bedrooms;
-    private Short bathrooms;
 
 }

@@ -1,13 +1,15 @@
 package com.example.bugzordservice;
 
 import com.example.protocol.BuildingDto;
+import com.example.protocol.PriceDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,48 @@ public class BugzordController {
                 .bedrooms(b.getBedrooms())
                 .bathrooms(b.getBathrooms())
                 .street(b.getAddress().getStreet())
+                .build();
+    }
+
+
+    @GetMapping("/api/maxprice")
+    public Map<String, PriceDto> getMaxPriceForAllCountries() {
+        Map<String, PriceDto> result = new HashMap<>();
+        buildingRepo.findAll(P).forEach(b -> {
+            final String country = b.getAddress().getCountry();
+            if (result.containsKey(country)) {
+                if (result.get(country).getPrice() < b.getPrice()) {
+                    result.replace(country, mapPrice(b));
+                }
+            } else {
+                result.put(country, mapPrice(b));
+            }
+        });
+        return result;
+    }
+
+    @GetMapping("/api/minprice")
+    public Map<String, PriceDto> getMinPriceForAllCountries() {
+        Map<String, PriceDto> result = new HashMap<>();
+        buildingRepo.findAll(P).forEach(b -> {
+            final String country = b.getAddress().getCountry();
+            if (result.containsKey(country)) {
+                if (result.get(country).getPrice() > b.getPrice()) {
+                    result.replace(country, mapPrice(b));
+                }
+            } else {
+                result.put(country, mapPrice(b));
+            }
+        });
+        return result;
+    }
+
+    private PriceDto mapPrice(Buildings b) {
+        return PriceDto.builder()
+                .city(b.getAddress().getCity())
+                .price(b.getPrice())
+                .street(b.getAddress().getStreet())
+                .type(b.getType().toString())
                 .build();
     }
 

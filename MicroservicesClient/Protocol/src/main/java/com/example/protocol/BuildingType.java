@@ -1,4 +1,4 @@
-package com.example.bugzordservice;
+package com.example.protocol;
 
 public enum BuildingType {
     Apartment,

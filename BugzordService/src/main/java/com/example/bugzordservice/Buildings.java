@@ -1,5 +1,6 @@
 package com.example.bugzordservice;
 
+import com.example.protocol.BuildingType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
