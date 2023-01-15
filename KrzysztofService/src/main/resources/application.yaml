@@ -1,1 +1,11 @@
 
+spring:
+    datasource:
+        url: jdbc:postgresql://baasu.db.elephantsql.com:5432/clvisutf?currentSchema=public
+        username: clvisutf
+        password: EAj3Wj3JbyKOfGVvFlJ_5vD4fQ6IjE6Y
+
+
+server:
+    port: 8070
+

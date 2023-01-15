@@ -1,6 +1,7 @@
 package com.example.connectorservice;
 
 import com.example.bugzordclient.BugzordFeignClient;
+import com.example.krzysztofclient.KrzychuFeignClient;
 import com.example.protocol.BuildingDto;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,16 @@ import java.util.Set;
 public class csc {
 
     final BugzordFeignClient client;
+    final KrzychuFeignClient krzychuFeignClient;
 
 
     @GetMapping("/api")
     Set<BuildingDto> getBuildings(){
         return client.getBuildings();
+    }
+
+    @GetMapping("/api/krzychu")
+    Set<BuildingDto> getBuildingsKrzycha(){
+        return krzychuFeignClient.getBuildings();
     }
 }
