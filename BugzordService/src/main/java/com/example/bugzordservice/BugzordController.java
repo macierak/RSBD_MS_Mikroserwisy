@@ -13,11 +13,11 @@ public class BugzordController {
     final AddressRepo addressRepo;
 
     @GetMapping("/api/addresses")
-    public List<Address> eg() {
+    public List<Address> addresses() {
         return addressRepo.findAll();
     }
     @GetMapping("/api/getBuildings")
-    public List<Buildings> egsd() {
+    public List<Buildings> buildings() {
         return buildingRepo.findAll();
     }
 
