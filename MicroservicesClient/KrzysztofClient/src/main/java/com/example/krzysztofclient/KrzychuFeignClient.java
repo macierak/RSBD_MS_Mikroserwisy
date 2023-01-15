@@ -23,8 +23,7 @@ public interface KrzychuFeignClient {
 
     @GetMapping("/api/buildings/price")
     Set<BuildingDto> getBuildingsByPrice(@RequestParam(required = false) Long priceFrom,
-                                         @RequestParam(required = false) Long priceTo,
-                                         @RequestParam(required = false) String sort);
+                                         @RequestParam(required = false) Long priceTo);
 
     @GetMapping("/api/maxprice")
     Map<String, PriceDto> getMaxPriceForAllCountries();

@@ -70,8 +70,8 @@ public class ConnectorServiceController {
                                                 @RequestParam(required = false) String sort) {
 
         final Set<BuildingDto> result = new HashSet<>();
-        result.addAll(krzychuFeignClient.getBuildingsByPrice(priceFrom, priceTo, sort));
-        result.addAll(bugzordFeignClient.getBuildingsByPrice(priceFrom, priceTo, sort));
+        result.addAll(krzychuFeignClient.getBuildingsByPrice(priceFrom, priceTo));
+        result.addAll(bugzordFeignClient.getBuildingsByPrice(priceFrom, priceTo));
 
         if (sort.equalsIgnoreCase("DESC")) {
             return result.stream().sorted(Comparator.comparing(BuildingDto::getPrice).reversed()).toList();

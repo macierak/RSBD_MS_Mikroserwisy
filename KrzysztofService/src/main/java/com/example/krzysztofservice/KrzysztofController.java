@@ -48,8 +48,7 @@ public class KrzysztofController {
 
     @GetMapping("/api/buildings/price")
     public Set<BuildingDto> getBuildingsByPrice(@RequestParam(required = false) Long priceFrom,
-                                                @RequestParam(required = false) Long priceTo,
-                                                @RequestParam(required = false) String sort) {
+                                                @RequestParam(required = false) Long priceTo) {
 
         if (Objects.isNull(priceFrom)) priceFrom = 0L;
         if (Objects.isNull(priceTo)) priceTo = Long.MAX_VALUE;
@@ -61,7 +60,6 @@ public class KrzysztofController {
     public Set<BuildingDto> getBuildingsByPrice() {
 
     }
-
 
     @GetMapping("/api/maxprice")
     public Map<String, PriceDto> getMaxPriceForAllCountries() {
