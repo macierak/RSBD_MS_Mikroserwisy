@@ -12,6 +12,7 @@
     <artifactId>MicroservicesClient</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>MicroservicesClient</name>
+    <packaging>pom</packaging>
     <description>MicroservicesClient</description>
     <properties>
         <java.version>17</java.version>
@@ -65,4 +66,9 @@
         </plugins>
     </build>
 
+    <modules>
+        <module>BugzordClient</module>
+        <module>KrzysztofClient</module>
+        <module>Protocol</module>
+    </modules>
 </project>

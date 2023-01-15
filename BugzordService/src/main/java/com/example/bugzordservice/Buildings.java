@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "buildings")
-public class Building {
+public class Buildings {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;

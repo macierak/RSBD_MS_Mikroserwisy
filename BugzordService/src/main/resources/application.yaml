@@ -1,9 +1,12 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://baasu.db.elephantsql.com:5432/bhugxzor
+    url: jdbc:postgresql://baasu.db.elephantsql.com:5432/bhugxzor?currentSchema=db
     username: bhugxzor
     password: Kq-bs2dyl9LqWr5423qRgMKh2ULfvvPr
+  jpa:
+    hibernate:
+      ddl-auto: validate
 
 server:
   port: 8060
