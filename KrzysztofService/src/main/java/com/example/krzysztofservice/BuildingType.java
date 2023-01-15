@@ -1,8 +1,8 @@
 package com.example.krzysztofservice;
 
 public enum BuildingType {
-    APARTMENT,
-    SINGLE,
-    TWIN,
-    TENENMENT
+    Apartment,
+    Single,
+    Twin,
+    Tenement
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,19 +17,13 @@ public class KrzysztofController {
     final AddressRepo addressRepo;
 
     @GetMapping("/api/getBuildings")
-    public Set<BuildingDto> getBuildings() {
-        return buildingRepo.findAll().stream().map(KrzysztofController::map).collect(Collectors.toSet());
+    public List<Building> getBuildings() {
+        return buildingRepo.findAll();
     }
 
-    private static BuildingDto map(Building b) {
-        return BuildingDto.builder()
-                .bathrooms(b.getBathrooms())
-                .bedrooms(b.getBedrooms())
-                .city(b.getAddress().getCity())
-                .country(b.getAddress().getCountry())
-                .price(b.getPrice())
-                .street(b.getAddress().getStreet())
-                .type(b.getType().toString())
-                .build();
+    @GetMapping("/api/getAddresses")
+    public List<Address> getAddresses() {
+        return addressRepo.findAll();
     }
+
 }
