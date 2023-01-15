@@ -28,7 +28,7 @@ public interface KrzychuFeignClient {
                                          @RequestParam(required = false) Long priceTo);
 
     @GetMapping("/api/average/country")
-    Map<CountryAvgPrice, Integer> getAvgPricePerCountry();
+    Set<CountryAvgPrice> getAvgPricePerCountry();
 
     @GetMapping("/api/maxprice")
     Map<String, PriceDto> getMaxPriceForAllCountries();

@@ -31,7 +31,7 @@ public interface BugzordFeignClient {
     Map<String, PriceDto> getMaxPriceForAllCountries();
 
     @GetMapping("/api/average/country")
-    Map<CountryAvgPrice, Integer> getAvgPricePerCountry();
+    Set<CountryAvgPrice> getAvgPricePerCountry();
 
     @GetMapping("/api/minprice")
     Map<String, PriceDto> getMinPriceForAllCountries();

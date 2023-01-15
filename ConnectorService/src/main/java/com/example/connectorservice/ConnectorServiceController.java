@@ -184,10 +184,28 @@ public class ConnectorServiceController {
 
     @GetMapping("/api/average/country")
     public Map<String, Double> getAvgPricePerCountry() {
-        Set<CountryAvgPrice> kSet = krzychuFeignClient.getAvgPricePerCountry().keySet();
-        Set<CountryAvgPrice> bSet = bugzordFeignClient.getAvgPricePerCountry().keySet();
+        final Set<CountryAvgPrice> kSet = krzychuFeignClient.getAvgPricePerCountry();
+        final Set<CountryAvgPrice> bSet = bugzordFeignClient.getAvgPricePerCountry();
+        final Map<String, Double> result = new HashMap<>();
 
+        kSet.forEach(k -> {
+            if (bSet.stream().noneMatch(b -> k.getCountry().equals(b.getCountry()))) {
+                result.put(k.getCountry(), k.getPrice());
+            } else {
+                final CountryAvgPrice bPrice = bSet.stream()
+                        .filter(b -> b.getCountry().equals(k.getCountry()))
+                        .findFirst().get();
+                result.put(k.getCountry(), ( bPrice.getPrice() + k.getPrice() ) / 2);
+            }
+        });
 
+        bSet.stream().forEach(b -> {
+            if (kSet.stream().noneMatch(k -> k.getCountry().equals(b.getCountry()))) {
+                result.put(b.getCountry(), b.getPrice());
+            }
+        });
+
+        return result;
     }
 
 }

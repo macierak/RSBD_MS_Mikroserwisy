@@ -120,8 +120,8 @@ public class BugzordController {
     }
 
     @GetMapping("/api/average/country")
-    public Map<CountryAvgPrice, Integer> getAvgPricePerCountry() {
-        Map<CountryAvgPrice, Integer> res = new HashMap<>();
+    public Set<CountryAvgPrice> getAvgPricePerCountry() {
+        Set<CountryAvgPrice> res = new HashSet<>();
         Set<BuildingDto> building = buildings();
         countriesList(building).forEach(c -> {
             Set<BuildingDto> set = building.stream()
@@ -131,7 +131,7 @@ public class BugzordController {
                     .mapToDouble(BuildingDto::getPrice)
                     .average().getAsDouble();
 
-            res.put(new CountryAvgPrice(c, average), set.size());
+            res.add(new CountryAvgPrice(c, average));
         });
         return res;
     }
