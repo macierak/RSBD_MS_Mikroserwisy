@@ -2,6 +2,7 @@ package com.example.krzysztofservice;
 
 import com.example.protocol.BuildingDto;
 import com.example.protocol.BuildingType;
+import com.example.protocol.CountryAvgPrice;
 import com.example.protocol.PriceDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -12,10 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 
@@ -106,6 +105,23 @@ public class KrzysztofController {
         return result;
     }
 
+    @GetMapping("/api/average/country")
+    public Map<CountryAvgPrice, Integer> getAvgPricePerCountry() {
+        Map<CountryAvgPrice, Integer> res = new HashMap<>();
+        Set<BuildingDto> building = buildings();
+        countriesList(building).forEach(c -> {
+            Set<BuildingDto> set = building.stream()
+                    .filter(b -> b.getCountry().equals(c))
+                    .collect(Collectors.toSet());
+            final Double average = set.stream()
+                    .mapToDouble(BuildingDto::getPrice)
+                    .average().getAsDouble();
+
+            res.put(new CountryAvgPrice(c, average), set.size());
+        });
+        return res;
+    }
+
     private PriceDto mapPrice(Building b) {
         return PriceDto.builder()
                 .city(b.getAddress().getCity())
@@ -127,5 +143,14 @@ public class KrzysztofController {
                 .street(b.getAddress().getStreet())
                 .build();
     }
+
+    private static Set<String> countriesList(Set<BuildingDto> dto) {
+        Set<String> cSet = new HashSet<>();
+        dto.forEach(b -> {
+            cSet.add(b.getCountry());
+        });
+        return cSet;
+    }
+
 
 }

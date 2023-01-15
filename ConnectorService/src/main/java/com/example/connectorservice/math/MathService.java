@@ -37,7 +37,6 @@ public class MathService {
         return resMap;
     }
 
-
     private static Set<String> countriesList(Set<BuildingDto> dto) {
         Set<String> cSet = new HashSet<>();
         dto.forEach(b -> {

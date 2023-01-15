@@ -4,6 +4,7 @@ import com.example.bugzordclient.BugzordFeignClient;
 import com.example.connectorservice.math.MathService;
 import com.example.krzysztofclient.KrzychuFeignClient;
 import com.example.protocol.BuildingDto;
+import com.example.protocol.CountryAvgPrice;
 import com.example.protocol.PriceDto;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -19,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -164,6 +166,14 @@ public class ConnectorServiceController {
         }
 
         return result;
+    }
+
+    @GetMapping("/api/average/country")
+    public Map<String, Double> getAvgPricePerCountry() {
+        Set<CountryAvgPrice> kSet = krzychuFeignClient.getAvgPricePerCountry().keySet();
+        Set<CountryAvgPrice> bSet = bugzordFeignClient.getAvgPricePerCountry().keySet();
+
+
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.bugzordclient;
 
 import com.example.protocol.BuildingDto;
 import com.example.protocol.BuildingType;
+import com.example.protocol.CountryAvgPrice;
 import com.example.protocol.PriceDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,9 @@ public interface BugzordFeignClient {
 
     @GetMapping("/api/maxprice")
     Map<String, PriceDto> getMaxPriceForAllCountries();
+
+    @GetMapping("/api/average/country")
+    Map<CountryAvgPrice, Integer> getAvgPricePerCountry();
 
     @GetMapping("/api/minprice")
     Map<String, PriceDto> getMinPriceForAllCountries();

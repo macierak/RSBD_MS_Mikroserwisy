@@ -2,6 +2,7 @@ package com.example.krzysztofclient;
 
 import com.example.protocol.BuildingDto;
 import com.example.protocol.BuildingType;
+import com.example.protocol.CountryAvgPrice;
 import com.example.protocol.PriceDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,9 @@ public interface KrzychuFeignClient {
     @GetMapping("/api/buildings/price")
     Set<BuildingDto> getBuildingsByPrice(@RequestParam(required = false) Long priceFrom,
                                          @RequestParam(required = false) Long priceTo);
+
+    @GetMapping("/api/average/country")
+    Map<CountryAvgPrice, Integer> getAvgPricePerCountry();
 
     @GetMapping("/api/maxprice")
     Map<String, PriceDto> getMaxPriceForAllCountries();
