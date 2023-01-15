@@ -10,6 +10,4 @@ public class PriceDto {
     private String type;
     private Long price;
     private String city;
-
-
 }

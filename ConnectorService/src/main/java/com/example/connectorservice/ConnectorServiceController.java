@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -148,6 +150,20 @@ public class ConnectorServiceController {
     @GetMapping("/api/locals/percentage")
     public Map<String, Set<LocalePercentageResponse>> getPercentage() {
         return MathService.getPercentage(connectBuildings());
+    }
+
+    @GetMapping("/api/buildings/rooms-in-type")
+    public Map<com.example.protocol.BuildingType, Double> getRoomsPerBathroom() {
+
+        Map<com.example.protocol.BuildingType, Double> result = new HashMap<>(krzychuFeignClient.getRoomsPerBathroom());
+        Map<com.example.protocol.BuildingType, Double> fromClient = bugzordFeignClient.getRoomsPerBathroom();
+
+        for (com.example.protocol.BuildingType buildingType : com.example.protocol.BuildingType.getListTypes()) {
+            final Double val = BigDecimal.valueOf(result.get(buildingType) + fromClient.get(buildingType) / 2).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            result.put(buildingType, val);
+        }
+
+        return result;
     }
 
 }

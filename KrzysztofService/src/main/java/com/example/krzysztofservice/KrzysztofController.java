@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -56,9 +59,19 @@ public class KrzysztofController {
         return buildingRepo.findAllByPriceAfterAndPriceBefore(priceFrom, priceTo, P).map(KrzysztofController::map).toSet();
     }
 
-    @GetMapping("/api/buildings/rooms-and-bathrooms")
-    public Set<BuildingDto> getBuildingsByPrice() {
+    @GetMapping("/api/buildings/rooms-in-type")
+    public Map<BuildingType, Double> getRoomsPerBathroom() {
+        final Map<BuildingType, Double> result = new HashMap<>();
+        Set<Building> buildings = buildingRepo.findAll(P).toSet();
+        for (BuildingType buildingType : BuildingType.getListTypes()) {
+            result.put(buildingType, calculateRoomsByType(
+                    buildings.stream().filter(b -> b.getType().equals(buildingType)).collect(Collectors.toSet())));
+        }
 
+        return result;
+    }
+    private static Double calculateRoomsByType(Set<Building> buildings) {
+        return BigDecimal.valueOf(buildings.stream().mapToDouble(Building::getBedrooms).sum() / buildings.stream().mapToDouble(Building::getBathrooms).sum()).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     @GetMapping("/api/maxprice")

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.HashMap;
@@ -57,6 +59,21 @@ public class BugzordController {
         if (Objects.isNull(priceTo)) priceTo = Long.MAX_VALUE;
 
         return buildingRepo.findAllByPriceAfterAndPriceBefore(priceFrom, priceTo, P).map(BugzordController::map).toSet();
+    }
+
+    @GetMapping("/api/buildings/rooms-in-type")
+    public Map<BuildingType, Double> getRoomsPerBathroom() {
+        final Map<BuildingType, Double> result = new HashMap<>();
+        Set<Buildings> buildings = buildingRepo.findAll(P).toSet();
+        for (BuildingType buildingType : BuildingType.getListTypes()) {
+            result.put(buildingType, calculateRoomsByType(
+                    buildings.stream().filter(b -> b.getType().equals(buildingType)).collect(Collectors.toSet())));
+        }
+
+        return result;
+    }
+    private static Double calculateRoomsByType(Set<Buildings> buildings) {
+        return BigDecimal.valueOf(buildings.stream().mapToDouble(Buildings::getBedrooms).sum() / buildings.stream().mapToDouble(Buildings::getBathrooms).sum()).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     private static BuildingDto map(Buildings b) {
