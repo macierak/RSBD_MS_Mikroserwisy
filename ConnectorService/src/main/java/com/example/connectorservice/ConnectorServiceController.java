@@ -154,14 +154,28 @@ public class ConnectorServiceController {
         return MathService.getPercentage(connectBuildings());
     }
 
-    @GetMapping("/api/buildings/rooms-in-type")
+    @GetMapping("/api/buildings/rooms-per-bathrooms")
     public Map<com.example.protocol.BuildingType, Double> getRoomsPerBathroom() {
 
         Map<com.example.protocol.BuildingType, Double> result = new HashMap<>(krzychuFeignClient.getRoomsPerBathroom());
         Map<com.example.protocol.BuildingType, Double> fromClient = bugzordFeignClient.getRoomsPerBathroom();
 
         for (com.example.protocol.BuildingType buildingType : com.example.protocol.BuildingType.getListTypes()) {
-            final Double val = BigDecimal.valueOf(result.get(buildingType) + fromClient.get(buildingType) / 2).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            final Double val = BigDecimal.valueOf((result.get(buildingType) + fromClient.get(buildingType)) / 2).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            result.put(buildingType, val);
+        }
+
+        return result;
+    }
+
+    @GetMapping("/api/buildings/rooms-in-type")
+    public Map<com.example.protocol.BuildingType, Double> getRoomsInType() {
+
+        Map<com.example.protocol.BuildingType, Double> result = new HashMap<>(krzychuFeignClient.getRoomsInType());
+        Map<com.example.protocol.BuildingType, Double> fromClient = bugzordFeignClient.getRoomsInType();
+
+        for (com.example.protocol.BuildingType buildingType : com.example.protocol.BuildingType.getListTypes()) {
+            final Double val = BigDecimal.valueOf((result.get(buildingType) + fromClient.get(buildingType)) / 2).setScale(2, RoundingMode.HALF_UP).doubleValue();
             result.put(buildingType, val);
         }
 

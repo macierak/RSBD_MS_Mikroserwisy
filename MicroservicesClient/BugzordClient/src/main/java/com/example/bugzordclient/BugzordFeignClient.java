@@ -36,6 +36,9 @@ public interface BugzordFeignClient {
     @GetMapping("/api/minprice")
     Map<String, PriceDto> getMinPriceForAllCountries();
 
-    @GetMapping("/api/buildings/rooms-in-type")
+    @GetMapping("/api/buildings/rooms-per-bathrooms")
     Map<BuildingType, Double> getRoomsPerBathroom();
+
+    @GetMapping("/api/buildings/rooms-in-type")
+    Map<BuildingType, Double> getRoomsInType();
 }

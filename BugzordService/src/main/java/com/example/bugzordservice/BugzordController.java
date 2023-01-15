@@ -58,10 +58,10 @@ public class BugzordController {
         return buildingRepo.findAllByPriceAfterAndPriceBefore(priceFrom, priceTo, P).map(BugzordController::map).toSet();
     }
 
-    @GetMapping("/api/buildings/rooms-in-type")
+    @GetMapping("/api/buildings/rooms-per-bathrooms")
     public Map<BuildingType, Double> getRoomsPerBathroom() {
         final Map<BuildingType, Double> result = new HashMap<>();
-        Set<Buildings> buildings = buildingRepo.findAll(P).toSet();
+        final Set<Buildings> buildings = buildingRepo.findAll(P).toSet();
         for (BuildingType buildingType : BuildingType.getListTypes()) {
             result.put(buildingType, calculateRoomsByType(
                     buildings.stream().filter(b -> b.getType().equals(buildingType)).collect(Collectors.toSet())));
@@ -71,6 +71,22 @@ public class BugzordController {
     }
     private static Double calculateRoomsByType(Set<Buildings> buildings) {
         return BigDecimal.valueOf(buildings.stream().mapToDouble(Buildings::getBedrooms).sum() / buildings.stream().mapToDouble(Buildings::getBathrooms).sum()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    @GetMapping("/api/buildings/rooms-in-type")
+    public Map<BuildingType, Double> getRoomsInType() {
+        final Map<BuildingType, Double> result = new HashMap<>();
+        final Set<Buildings> buildings = buildingRepo.findAll(P).toSet();
+        for (BuildingType buildingType : BuildingType.getListTypes()) {
+            result.put(buildingType, BigDecimal.valueOf(
+                            buildings.stream()
+                                    .filter(b -> b.getType().equals(buildingType))
+                                    .mapToDouble(Buildings::getBedrooms)
+                                    .average().getAsDouble())
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue());
+        }
+
+        return result;
     }
 
     private static BuildingDto map(Buildings b) {

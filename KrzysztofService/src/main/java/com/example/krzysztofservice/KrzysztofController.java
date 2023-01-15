@@ -58,19 +58,37 @@ public class KrzysztofController {
         return buildingRepo.findAllByPriceAfterAndPriceBefore(priceFrom, priceTo, P).map(KrzysztofController::map).toSet();
     }
 
-    @GetMapping("/api/buildings/rooms-in-type")
+    @GetMapping("/api/buildings/rooms-per-bathrooms")
     public Map<BuildingType, Double> getRoomsPerBathroom() {
         final Map<BuildingType, Double> result = new HashMap<>();
-        Set<Building> buildings = buildingRepo.findAll(P).toSet();
+        final Set<Building> buildings = buildingRepo.findAll(P).toSet();
         for (BuildingType buildingType : BuildingType.getListTypes()) {
             result.put(buildingType, calculateRoomsByType(
-                    buildings.stream().filter(b -> b.getType().equals(buildingType)).collect(Collectors.toSet())));
+                    buildings.stream()
+                            .filter(b -> b.getType().equals(buildingType))
+                            .collect(Collectors.toSet())));
         }
 
         return result;
     }
     private static Double calculateRoomsByType(Set<Building> buildings) {
         return BigDecimal.valueOf(buildings.stream().mapToDouble(Building::getBedrooms).sum() / buildings.stream().mapToDouble(Building::getBathrooms).sum()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    @GetMapping("/api/buildings/rooms-in-type")
+    public Map<BuildingType, Double> getRoomsInType() {
+        final Map<BuildingType, Double> result = new HashMap<>();
+        final Set<Building> buildings = buildingRepo.findAll(P).toSet();
+        for (BuildingType buildingType : BuildingType.getListTypes()) {
+            result.put(buildingType, BigDecimal.valueOf(
+                    buildings.stream()
+                            .filter(b -> b.getType().equals(buildingType))
+                            .mapToDouble(Building::getBedrooms)
+                            .average().getAsDouble())
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue());
+        }
+
+        return result;
     }
 
     @GetMapping("/api/maxprice")
